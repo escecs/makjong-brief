@@ -1,0 +1,71 @@
+/* 中文表达式积木：让比较式两侧显示为对象 / 属性 / 常量 / 公式控件 */
+.expr-palette{margin-top:2px}
+.palette-hint{flex-basis:100%;font-size:10px;color:var(--muted2);padding:2px 2px 0;line-height:1.5}
+.palette-btn.expr{background:#14324a;border-color:#2f6b62}
+.expr-slot{display:inline-flex;align-items:center;min-width:110px;min-height:32px;padding:2px 4px;border:1px dashed transparent;border-radius:10px;vertical-align:middle;transition:border-color .15s,background .15s;max-width:100%}
+.expr-slot:hover{border-color:#35506a;background:rgba(64,211,190,.04)}
+.expr-drop-active{border-color:var(--teal)!important;background:var(--teal-soft)!important}
+.expr-block{display:inline-flex;align-items:center;gap:4px;flex-wrap:wrap;background:#0f2437;border:1px solid #2f4a63;border-radius:10px;padding:3px 6px;max-width:100%}
+.expr-block select{width:auto;min-width:0;max-width:178px;padding:4px 6px;font-size:12px;border-radius:7px;background:#0b1c2d;line-height:1.3}
+.expr-block input[type=number],.expr-block input.expr-text{width:76px;min-width:0!important;max-width:120px;padding:4px 6px;font-size:12px;border-radius:7px}
+.expr-call{gap:2px}
+.expr-args{display:inline-flex;align-items:center;flex-wrap:wrap;gap:3px}
+.expr-arg{display:inline-flex;align-items:center;gap:2px;border:1px dashed #2f4a63;border-radius:9px;padding:1px 3px}
+.expr-arg-index{font-size:9px;color:var(--muted2);min-width:8px;text-align:center}
+.expr-comma{color:var(--muted2);font-size:11px}
+.expr-mini{width:auto;padding:0 6px;line-height:20px;font-size:12px;border-radius:6px;background:#1b3348;border:1px solid #35506a;color:var(--text)}
+.expr-mini:hover{filter:brightness(1.15)}
+.expr-raw-wrap{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--red);border-radius:9px;padding:1px 4px;max-width:100%}
+.expr-raw-wrap::before{content:'旧表达式';font-size:10px;color:var(--red);white-space:nowrap}
+.expr-raw-wrap input.expr-raw{min-width:170px!important;max-width:320px;padding:4px 6px;font-size:12px;border-color:var(--red)}
+.binding-chip{display:inline-block;padding:3px 9px;border-radius:9px;background:#123f3b;border:1px solid #2c8b83;font-size:12px;color:#c9f5ef;white-space:nowrap}
+.quantifier-node>.logic-top input.binding-input{width:92px;max-width:92px!important;padding:4px 6px;font-size:12px;border-radius:7px;background:#123f3b;border:1px solid #2c8b83;color:#d9fff9;text-align:center}
+.quantifier-node>.logic-top input.binding-input:focus{border-color:var(--teal)}
+.binding-kind{font-size:10px;color:rgba(201,245,239,.72);margin-left:2px;white-space:nowrap}
+.quantifier-node>.logic-top .quantifier-symbol{font-weight:700;color:#d9fff9;font-size:14px}
+.quantifier-node>.logic-top .quantifier-mode{font-size:11px;color:rgba(201,245,239,.82);border:1px solid #4b9d94;border-radius:7px;padding:1px 6px;background:#164b48;white-space:nowrap}
+.formula-condition{flex-wrap:wrap;row-gap:4px}
+.formula-condition .expr-slot{max-width:100%}
+/* 通用语言积木：绿色 */
+.palette-cat.cat-lang{color:var(--teal)}
+.palette-btn.lang{background:#123f3b;border-color:#2c8b83;color:#d9fff9}
+.palette-btn.logic{background:#332a18;border-color:#8a6a35;color:var(--orange)}
+.condition.compare-cond{border-color:#8f4b50;background:rgba(237,143,146,.06)}
+.condition.compare-cond>.cond-label{color:var(--red)}
+/* 公式积木：紫色 */
+.palette-cat.cat-formula{color:var(--violet)}
+.palette-cat.cat-logic{color:var(--teal)}
+.palette-cat.cat-compare{color:var(--red)}
+.palette-cat.cat-fact{color:var(--blue)}
+.palette-cat.cat-attr{color:#8fd3ff}
+.palette-btn.compare{background:#3a1f24;border-color:#8f4b50;color:var(--red)}
+.logic-hint{font-size:11px;color:inherit;opacity:.68;white-space:nowrap;margin-left:2px}
+.category-inventory{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow:auto;margin:8px 0 16px}
+.category-row{display:flex;flex-direction:column;gap:6px;padding:8px;border:1px solid #2b4257;border-radius:8px;background:#0f1b28}
+.cat-head{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:end}
+.cat-head .field{margin:0}
+.cat-key{font-size:11px;color:var(--muted);font-family:ui-monospace,monospace;padding-bottom:10px;white-space:nowrap}
+.cat-tiles{margin:0}
+.cat-note{font-size:11px;color:var(--muted);padding:4px 0}
+.canvas-label .canvas-title{font-size:14px;font-weight:700;letter-spacing:.01em}
+.quantifier-node>.logic-top{flex-wrap:wrap;row-gap:4px}
+.palette-btn.formula{background:#241c3a;border-color:#5b4a8a;color:#efe9ff;font-size:11px;padding:6px 8px}
+.expr-formula{background:#241c3a;border-color:#5b4a8a;color:#e7ddff;gap:4px}
+.expr-formula .expr-arg{border-color:#5b4a8a}
+.expr-formula .expr-word{white-space:nowrap;color:#e7ddff}
+.expr-formula select{background:#1b1530}
+.expr-formula input[type=number],.expr-formula input.expr-text{background:#1b1530}
+dialog.structure-modal{width:min(795px,calc(100vw - 30px))}
+.settle-tokens{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.settle-token{background:#173246;border:1px solid #3b617b;color:#d9eefc;border-radius:7px;padding:5px 8px;font-size:11px;cursor:grab}
+.settle-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.settle-field{margin:0}
+.settle-field input{font-family:ui-monospace,Consolas,monospace;font-size:11px;padding:8px 9px}
+.result-settlement{margin-top:12px;padding:11px;border:1px solid #3f6570;border-radius:10px;background:#102a2c}
+.settle-title{font-size:11px;color:#a9e7d7;font-weight:700;margin-bottom:7px}
+.settle-row{display:flex;justify-content:space-between;gap:10px;padding:3px 0;font-size:12px;color:#c8d9df}
+.settle-row.win{color:#e7fff8}
+.settle-row b{font-variant-numeric:tabular-nums}
+.settle-note{margin-top:6px;font-size:10px;color:#8fb3b7}
+@media(max-width:750px){.settle-grid{grid-template-columns:1fr}}
+.expr-missing{color:var(--red);font-size:11px}

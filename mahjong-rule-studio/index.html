@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#0b1727" />
+<title>麻将番型实验室</title>
+<link rel="stylesheet" href="styles.css?v=39" />
+<link rel="stylesheet" href="expressions.css?v=39" />
+<style>
+  /* brief 模式：积木面板移到右栏，手牌测试器在其下方 */
+  .palette-dock { flex: none; border-bottom: 1px solid var(--line); margin-bottom: 6px; padding-bottom: 6px; max-height: none; overflow: visible; }
+  body.brief-mode .tester { display: block; overflow-y: auto !important; }
+  body.brief-mode .tester > .test-scroll { flex: none; min-height: 0; height: auto !important; max-height: none !important; overflow: visible !important; }
+  .palette-dock .builder-intro { margin: 12px 14px 8px; padding: 0; border: 0; }
+  .palette-dock .builder-intro h3 { font-size: 14px; }
+  .palette-dock .builder-intro p { font-size: 10px; line-height: 1.55; }
+  .palette-dock .palette { margin: 0 14px 8px; }
+  .palette-dock .expr-palette { margin: 0 14px 8px; }
+  .palette-dock .palette-hint { margin: 0 14px 4px; }
+  body.brief-mode .topbar { display: none; }
+  body.brief-mode .workspace { padding: 0 !important; gap: 10px; align-items: start; }
+  body.brief-mode .editor { min-height: 100vh; min-height: 100dvh; border-radius: 0; }
+  body.brief-mode .library { position: sticky; top: 0; height: 100vh !important; height: 100dvh !important; max-height: 100vh !important; max-height: 100dvh !important; display: flex; flex-direction: column; overflow: hidden; border-radius: 0; }
+  body.brief-mode .library > .pane-head,
+  body.brief-mode .library > .search-wrap,
+  body.brief-mode .library > .library-footer { flex: none; }
+  body.brief-mode .library > .rule-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+  body.brief-mode .brief-actions { flex: none; display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--line); background: #0d1c2c; }
+  body.brief-mode .brief-actions .btn { width: 100%; }
+  body.brief-mode .brief-actions .ruleset-switch { justify-content: space-between; }
+  body.brief-mode .tester { top: 0; height: 100vh !important; height: 100dvh !important; max-height: 100vh !important; max-height: 100dvh !important; overflow-y: auto !important; border-radius: 0; }
+  @media (max-width: 760px) {
+    body.brief-mode .library { position: static; height: auto !important; max-height: none !important; }
+    body.brief-mode .tester { height: auto !important; max-height: none !important; }
+  }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div><strong>麻将番型实验室</strong><span>番型规则编辑器</span></div></div>
+  <div class="top-actions"><label class="ruleset-switch"><span>规则体系</span><select id="rulesetSelect"></select></label><button class="btn secondary" id="manageRuleSetsBtn">管理体系</button><span class="small-tag"><span class="live-dot"></span> v34 · 结算积木</span><button class="btn secondary" id="exportBtn">导出存档</button><button class="btn secondary" id="omcExportBtn">导出番种包</button><button class="btn secondary" id="briefImportBtn" style="display:none">导入番种包</button><input type="file" id="briefImportFile" accept="application/json,.json" hidden/><button class="btn secondary" id="briefSampleBtn" style="display:none">载入示例</button><button class="btn secondary" id="importBtn">导入存档</button><input type="file" id="importFile" accept="application/json,.json" hidden/><button class="btn quiet" id="resetBtn">恢复预设</button></div>
+</header>
+<div class="workspace">
+  <aside class="library panel">
+    <div class="pane-head"><div><h2>番型库 <span class="pill" id="ruleCount">0</span></h2></div><button class="btn primary sm" id="newRuleBtn">＋ 新番型</button></div>
+    <div class="search-wrap"><span>⌕</span><input id="ruleSearch" placeholder="搜索番型名称…" /></div>
+    <div id="ruleList" class="rule-list"></div>
+    <div class="library-footer"><p><span class="tiny-circle"></span> 勾选启用的番型参与结算</p><button id="newSignalBtn" class="btn outline block">＋ 新建信号量</button><button id="categoryBtn" class="btn outline block">修改类别名词</button></div>
+  </aside>
+  <main class="editor panel">
+    <div class="pane-head editor-head"><div><h2>规则编辑器</h2></div><div class="head-actions"><button class="btn secondary sm" id="duplicateBtn">复制</button><button class="btn danger sm" id="deleteBtn">删除</button></div></div>
+    <section class="rule-meta">
+      <div class="form-grid"><label class="field grow"><span>番型名称</span><input id="ruleName" placeholder="例如：对称和"/></label><label class="field"><span>规则体系</span><select id="ruleRuleset"></select></label><label class="field"><span>分组</span><input id="ruleCategory" placeholder="例如：16分"/></label></div>
+      <div class="form-grid scores"><label class="field"><span>门清番数</span><input id="closedHan" type="number" min="0" max="99" value="1"/></label><label class="field"><span>副露番数 <small>空表示门清限定</small></span><input id="openHan" type="number" min="0" max="99" placeholder="门清限定" /></label><label class="field"><span>役满倍数</span><input id="yakuman" type="number" min="0" max="9" value="0" /></label></div>
+      <div class="field"><span>覆盖其他番型</span><div id="suppresses" class="suppress-choices"></div></div>
+      <label class="field"><span>备注</span><input id="ruleDescription" placeholder="可以填写规则说明"/></label>
+    </section>
+    <section class="builder-intro"><div><h3>规则积木</h3><p>通用语言积木可以从牌或面子集合中绑定变量，再比较任意属性与公式；旧积木继续兼容。</p></div><button class="btn secondary sm" id="addAndBtn">＋ 条件组</button></section>
+    <div class="palette" id="palette"></div>
+    <div class="palette expr-palette" id="exprPalette"></div>
+    <div class="workspace-rule"><div class="canvas-label"><span class="canvas-title">番型定义</span><span class="hint">点击容器可选择插入位置</span></div><div id="blockTree" class="block-tree"></div></div>
+    <div class="editor-tip"><span class="accent-dot">✦</span> 比较式两侧是中文表达式积木：可选择对象、位置、属性与常量；公式已拆成独立积木（牌属于类别、全部相同、不同值数量、求和、最值等），统一放在紫色「公式积木」区，并按中文语序显示参数，例如「雀头 牌属于类别 风牌」。变量名可直接在量词里修改（如 g1、g2），比较式的对象下拉会按名字列出当前可引用的变量。</div>
+  </main>
+  <aside class="tester panel">
+    <div class="pane-head"><div><h2>手牌测试器</h2></div><button class="btn secondary sm" id="exampleBtn">载入示例</button></div>
+    <div class="test-scroll">
+      <section class="test-section">
+        <div class="section-heading"><h3>① 输入手牌</h3><span class="tiny-help">m万 · p筒 · s索 · z字</span></div>
+        <div class="field"><div class="input-label"><span>暗手牌（不包含和牌张）</span><span id="concealedNeed">13 / 13</span></div><textarea id="concealed" rows="2" spellcheck="false" placeholder="123m456m789p123s1z"></textarea></div>
+        <label class="field"><span>和牌张（1张）</span><input id="winning" spellcheck="false" placeholder="1z" /></label>
+        <div class="tile-toolhead"><span>点击牌面快速输入</span><div class="toggle-tabs"><button data-tile-target="concealed" class="active" type="button">暗手牌</button><button data-tile-target="winning" type="button">和牌张</button></div></div>
+        <div id="tilePalette" class="tile-palette"></div>
+        <div class="inline-tools"><button id="undoTileBtn" class="text-button">⌫ 删除最后一张</button><button id="clearHandBtn" class="text-button">清空暗手牌</button></div>
+      </section>
+      <section class="test-section">
+        <div class="section-heading"><h3>② 副露 / 杠</h3><span class="tiny-help">每组占 3 个面子位</span></div>
+        <div id="meldList" class="meld-list"></div>
+        <button class="btn outline block" id="addMeldBtn">＋ 添加吃、碰或杠</button>
+      </section>
+      <section class="test-section">
+        <div class="section-heading"><h3>③ 对局信号量</h3><button id="signalsManageBtn" class="text-button">管理信号 ↗</button></div>
+        <div class="signals" id="signalControls"></div>
+      </section>
+      <section class="test-section result-section">
+        <button class="btn primary calculate block" id="calculateBtn">▶ 检测番型并计算番数</button>
+        <div id="result" class="result"><div class="empty-result"><span>◇</span><p>输入手牌、和牌张与信号量<br/>点击上方按钮开始判定</p></div></div>
+      </section>
+    </div>
+  </aside>
+</div>
+<dialog id="signalDialog" class="modal"><form method="dialog" id="signalForm"><div class="modal-heading"><h2>管理信号量</h2><button value="cancel" class="icon-btn" aria-label="关闭">×</button></div><p>信号量可以是布尔值、数值或枚举。新信号可以在规则的「信号量比较」积木里使用。</p><div id="signalInventory" class="signal-inventory"></div><h3>新增信号量</h3><label class="field"><span>内部名称（英文或数字，不能以数字开头）</span><input name="name" required placeholder="myCustomFlag" pattern="[A-Za-z_][A-Za-z_0-9]*" /></label><label class="field"><span>显示名称</span><input name="label" required placeholder="特殊时机" /></label><div class="form-grid"><label class="field"><span>类型</span><select name="type"><option value="boolean">开关（true / false）</option><option value="number">数字</option><option value="select">枚举</option></select></label><label class="field"><span>枚举选项（逗号分隔）</span><input name="options" placeholder="A,B,C" /></label></div><div class="modal-actions"><button type="button" class="btn quiet" id="closeSignalDialog">取消</button><button type="submit" value="save" class="btn primary">添加信号量</button></div></form></dialog>
+<dialog id="categoryDialog" class="modal"><form method="dialog" id="categoryForm"><div class="modal-heading"><h2>修改类别名词</h2><button value="cancel" class="icon-btn" aria-label="关闭">×</button></div><p>类别用于「牌属于类别」「所有牌属于集合」等积木。内置判定类别可以改名；带牌张列表的类别可以直接编辑包含哪些牌。</p><div id="categoryInventory" class="category-inventory"></div><h3>新增类别</h3><label class="field"><span>内部名称（英文或数字，不能以数字开头）</span><input name="key" required placeholder="redTiles" pattern="[A-Za-z_][A-Za-z_0-9]*" /></label><label class="field"><span>显示名称</span><input name="label" required placeholder="红牌" /></label><label class="field"><span>包含的牌（如 2s3s4s6s8s6z）</span><input name="tiles" required placeholder="2s3s4s6s8s6z" /></label><div class="modal-actions"><button type="button" class="btn quiet" id="closeCategoryDialog">取消</button><button type="submit" class="btn primary">添加类别</button></div></form></dialog>
+<dialog id="ruleSetDialog" class="modal ruleset-modal"><form method="dialog" id="ruleSetForm"><div class="modal-heading"><h2>规则体系</h2><button value="cancel" class="icon-btn" aria-label="关闭">×</button></div><p>规则体系决定可用和牌结构、信号量与计分方式；番型只是归属于体系的独立规则。</p><div class="ruleset-actions"><button type="button" class="btn primary sm" id="newRuleSetBtn">＋ 从空白新建</button><button type="button" class="btn secondary sm" id="copyRuleSetBtn">复制当前体系</button><button type="button" class="btn danger sm" id="deleteRuleSetBtn">删除当前体系</button></div><div class="form-grid"><label class="field grow"><span>体系名称</span><input id="ruleSetName" required /></label><label class="field"><span>计分单位</span><input id="ruleSetUnit" required placeholder="番 / 分" /></label><label class="field"><span>最低和牌分</span><input id="ruleSetMinimum" type="number" min="0" value="0" /></label></div><label class="field"><span>牌张体系</span><select id="ruleSetTiles"><option value="standard34">三门序数牌＋七种字牌（34种）</option></select></label><div class="section-heading structure-heading"><h3>允许的和牌结构</h3><button type="button" class="btn secondary sm" id="editStructuresBtn">编辑结构积木 ↗</button></div><div id="ruleSetStructures" class="structure-grid"></div><h3>计分策略</h3><div class="form-grid"><label class="field"><span>多个番型如何合计</span><select id="ruleSetAggregation"><option value="sum">全部相加</option><option value="max">只取最高</option></select></label><label class="check-field"><input id="ruleSetBest" type="checkbox" /> 从所有拆解中选择最高分</label><label class="check-field"><input id="ruleSetBonus" type="checkbox" /> 没有基础番型时允许奖励分</label></div><div class="section-heading"><h3>分数结算</h3><span class="tiny-help">拖动变量或公式到输入框</span></div><div id="settlementTokens" class="settle-tokens"></div><div id="settlementGrid" class="settle-grid"></div><div class="modal-actions"><button type="button" class="btn quiet" id="closeRuleSetDialog">取消</button><button type="submit" class="btn primary">保存体系设置</button></div></form></dialog>
+<dialog id="structureDialog" class="modal structure-modal"><div class="modal-heading"><div><div class="eyebrow">和牌结构</div><h2>和牌结构积木</h2></div><button type="button" class="icon-btn" id="closeStructureDialog" aria-label="关闭">×</button></div><p>结构积木负责生成拆解：牌张必须满足数量约束，并且全部被消费。番型积木继续负责检查生成后的拆解。新建默认是「面子＋对子拆分」；七对子等结构请切换“生成方式”。</p><div class="structure-workspace"><aside><div class="structure-toolbar"><button type="button" class="btn primary sm" id="newStructureBtn">＋ 新建</button><button type="button" class="btn secondary sm" id="copyStructureBtn">复制</button></div><div id="structureList" class="structure-list"></div></aside><form id="structureForm"><div class="form-grid"><label class="field grow"><span>结构名称</span><input id="structureName" required /></label><label class="field"><span>内部 ID</span><input id="structureId" disabled /></label></div><label class="field"><span>生成方式</span><select id="structureType"><option value="standard">面子＋雀头拆分</option><option value="multiplicity">按同牌张数生成单位</option><option value="requiredKinds">指定牌种全部出现</option><option value="adapter">保留的特殊拆分器</option></select></label><div id="structureBlocks" class="structure-blocks"></div><div class="modal-actions"><button type="button" class="btn danger" id="deleteStructureBtn">删除结构</button><button type="submit" class="btn primary">保存结构</button></div></form></div></dialog>
+<dialog id="sampleDialog" class="modal"><div class="modal-heading"><h2>载入示例</h2><button type="button" class="icon-btn" id="closeSampleDialog" aria-label="关闭">×</button></div><p>每个示例会向当前体系加入一条番型，并配好一副能判中的手牌与副露；加入后点右侧「检测番型并计算番数」即可试算。</p><div id="sampleList" class="sample-list"></div></dialog>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="language.js?v=39"></script><script src="engine.js?v=39"></script><script src="rules.js?v=39"></script><script src="mcr-rules.js?v=39"></script><script src="ruleset-model.js?v=39"></script><script src="omc-pack.js?v=39"></script><script src="samples.js?v=39"></script><script src="app.js?v=39"></script>
+</body>
+</html>

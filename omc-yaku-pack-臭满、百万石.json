@@ -1,0 +1,231 @@
+{
+  "format": "omc-yaku-pack",
+  "formatVersion": 1,
+  "base": {
+    "rulesetId": "riichi-mahjong",
+    "family": "riichi"
+  },
+  "meta": {
+    "packId": "riichi_custom_mvyon9sc",
+    "name": "立直麻将 自制番种",
+    "author": "臭满、百万石",
+    "version": "1.0.0",
+    "description": ""
+  },
+  "signalProfile": "omc-riichi-v1",
+  "yaku": [
+    {
+      "id": "custom.riichi_custom_mvyon9sc.mvxzmr8g",
+      "name": "臭满！",
+      "description": "1145141919810 8",
+      "category": "yakuman",
+      "suppresses": [],
+      "configurable": true,
+      "ast": {
+        "kind": "all",
+        "children": [
+          {
+            "kind": "check",
+            "key": "shape",
+            "value": "chiitoi"
+          },
+          {
+            "kind": "quantifier",
+            "source": "tiles",
+            "variable": "g1",
+            "mode": "every",
+            "op": "eq",
+            "value": 1,
+            "children": [
+              {
+                "kind": "compare",
+                "left": "g1.honor",
+                "op": "eq",
+                "right": "false"
+              }
+            ]
+          },
+          {
+            "kind": "quantifier",
+            "source": "tiles",
+            "variable": "g2",
+            "mode": "count",
+            "op": "eq",
+            "value": 6,
+            "children": [
+              {
+                "kind": "compare",
+                "left": "g2.rank",
+                "op": "eq",
+                "right": "1"
+              }
+            ]
+          },
+          {
+            "kind": "quantifier",
+            "source": "tiles",
+            "variable": "g3",
+            "mode": "count",
+            "op": "eq",
+            "value": 2,
+            "children": [
+              {
+                "kind": "compare",
+                "left": "g3.rank",
+                "op": "eq",
+                "right": "4"
+              }
+            ]
+          },
+          {
+            "kind": "quantifier",
+            "source": "tiles",
+            "variable": "g4",
+            "mode": "count",
+            "op": "eq",
+            "value": 2,
+            "children": [
+              {
+                "kind": "compare",
+                "left": "g4.rank",
+                "op": "eq",
+                "right": "5"
+              }
+            ]
+          },
+          {
+            "kind": "quantifier",
+            "source": "tiles",
+            "variable": "g5",
+            "mode": "count",
+            "op": "eq",
+            "value": 2,
+            "children": [
+              {
+                "kind": "compare",
+                "left": "g5.rank",
+                "op": "eq",
+                "right": "8"
+              }
+            ]
+          },
+          {
+            "kind": "quantifier",
+            "source": "tiles",
+            "variable": "g6",
+            "mode": "count",
+            "op": "eq",
+            "value": 2,
+            "children": [
+              {
+                "kind": "compare",
+                "left": "g6.rank",
+                "op": "eq",
+                "right": "9"
+              }
+            ]
+          },
+          {
+            "kind": "check",
+            "key": "signal",
+            "name": "akaCount",
+            "value": 1,
+            "op": "eq"
+          }
+        ]
+      },
+      "closedHan": 0,
+      "openHan": null,
+      "yakumanLevel": 1
+    },
+    {
+      "id": "custom.riichi_custom_mvyon9sc.mvy0l9oe_0",
+      "name": "百万石",
+      "description": "百万石",
+      "category": "yakuman",
+      "suppresses": [
+        "riichi.chinitsu"
+      ],
+      "configurable": true,
+      "ast": {
+        "kind": "all",
+        "children": [
+          {
+            "kind": "check",
+            "key": "shape",
+            "value": "standard"
+          },
+          {
+            "kind": "quantifier",
+            "source": "tiles",
+            "variable": "g1",
+            "mode": "every",
+            "op": "eq",
+            "value": 1,
+            "children": [
+              {
+                "kind": "compare",
+                "left": "g1.suit",
+                "op": "eq",
+                "right": "\"m\""
+              }
+            ]
+          },
+          {
+            "kind": "quantifier",
+            "source": "groupQuads",
+            "variable": "g2",
+            "mode": "some",
+            "op": "eq",
+            "value": 1,
+            "children": [
+              {
+                "kind": "compare",
+                "left": "add(mul(g2.0.center,g2.0.tileCount),mul(g2.1.center,g2.1.tileCount),mul(g2.2.center,g2.2.tileCount),mul(g2.3.center,g2.3.tileCount),mul(pair.rank,2))",
+                "op": "gte",
+                "right": "100"
+              }
+            ]
+          }
+        ]
+      },
+      "closedHan": 1,
+      "openHan": 1,
+      "yakumanLevel": 1
+    }
+  ],
+  "categories": [
+    {
+      "key": "green",
+      "label": "绿牌",
+      "tiles": [
+        "2s",
+        "3s",
+        "4s",
+        "6s",
+        "8s",
+        "6z"
+      ]
+    },
+    {
+      "key": "reversible",
+      "label": "推不倒",
+      "tiles": [
+        "1p",
+        "2p",
+        "3p",
+        "4p",
+        "5p",
+        "8p",
+        "9p",
+        "2s",
+        "4s",
+        "5s",
+        "6s",
+        "8s",
+        "9s",
+        "5z"
+      ]
+    }
+  ]
+}

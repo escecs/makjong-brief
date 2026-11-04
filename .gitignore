@@ -1,0 +1,10 @@
+node_modules/
+.DS_Store
+Thumbs.db
+*.log
+.tmp/
+dist/
+
+# 参考用的维基百科快照，不进版本库
+日本麻将古役*.html
+日本麻将古役*_files/
